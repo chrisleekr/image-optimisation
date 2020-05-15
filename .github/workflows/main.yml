@@ -22,11 +22,12 @@ jobs:
           npm run lint
           npm run test
       - name: Bump Version (Patch)
+        # if: github.ref == 'refs/heads/master'
         run: |
           git config --global user.email "$GIT_CI_EMAIL"
           git config --global user.name "$GIT_CI_NAME"
           npm version patch -m "Update version to %s [skip ci]"
-          git push https://$GIT_CI_USERNAME:$GIT_CI_PASSWORD@$GIT_REPO_DOMAIN/chrisleekr/nodejs-image-optimisation.git HEAD:master
+          git push https://$GIT_CI_USERNAME:$GIT_CI_PASSWORD@$GIT_REPO_DOMAIN/chrisleekr/nodejs-image-optimisation.git HEAD:$GITHUB_REF
       - name: Build production
         if: github.ref == 'refs/heads/master'
         run: |
