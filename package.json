@@ -1,6 +1,6 @@
 {
   "name": "nodejs-image-optimisation",
-  "version": "0.0.24",
+  "version": "0.0.26",
   "description": "Node.js Image Optimisation",
   "scripts": {
     "start": "node dist/server.js",
