@@ -24,6 +24,8 @@ jobs:
       - name: Bump Version (Patch)
         # if: github.ref == 'refs/heads/master'
         run: |
+          echo $GIT_CI_EMAIL
+          echo $GIT_CI_NAME
           git config --global user.email "$GIT_CI_EMAIL"
           git config --global user.name "$GIT_CI_NAME"
           npm version patch -m "Update version to %s [skip ci]"
