@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  api:
+    container_name: api
+    build:
+      context: ./
+      # target: dev-stage
+      target: production-stage
+    networks:
+      - internal
+    ports:
+      - 3001:3000
+    volumes:
+      - ./:/srv
+    environment:
+      - API_URL=http://localhost:3001
+      - TZ=Australia/Melbourne
+
+networks:
+  internal:
+    driver: bridge
