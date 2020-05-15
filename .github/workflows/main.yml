@@ -12,24 +12,22 @@ jobs:
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@master
-      - name: docker hub login
-        run: |
-          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin $REGISTRY_DOMAIN
-      - name: Testing
-        run: |
-          npm install
-          npm run lint
-          npm run test
+        uses: actions/checkout@v2
+      # - name: Testing
+      #   run: |
+      #     npm install
+      #     npm run lint
+      #     npm run test
       - name: Bump Version (Patch)
         # if: github.ref == 'refs/heads/master'
         run: |
           echo $GIT_CI_EMAIL
           echo $GIT_CI_NAME
-          git config --global user.email "$GIT_CI_EMAIL"
-          git config --global user.name "$GIT_CI_NAME"
           npm version patch -m "Update version to %s [skip ci]"
           git push https://$GIT_CI_USERNAME:$GIT_CI_PASSWORD@$GIT_REPO_DOMAIN/chrisleekr/nodejs-image-optimisation.git HEAD:$GITHUB_REF
+      - name: docker hub login
+        run: |
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin $REGISTRY_DOMAIN
       - name: Build production
         if: github.ref == 'refs/heads/master'
         run: |
