@@ -74,6 +74,7 @@ describe('imageController', () => {
                 },
                 {
                   value:
+                    // eslint-disable-next-line max-len
                     'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample99.jpg',
                   msg: 'Image and URL cannot be provided at the same time. Please post with image or URL.',
                   param: 'url',
@@ -161,6 +162,7 @@ describe('imageController', () => {
               data: [
                 {
                   value:
+                    // eslint-disable-next-line max-len
                     'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample99.jpg',
                   msg: 'Request failed with status code 404',
                   param: 'url',
@@ -174,12 +176,11 @@ describe('imageController', () => {
 
       describe('when provided url is not an image', () => {
         beforeEach(async () => {
-          response = await request
-            .post('/image')
-            .field(
-              'url',
-              'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/app/controllers/__tests__/sample1.json'
-            );
+          response = await request.post('/image').field(
+            'url',
+            // eslint-disable-next-line max-len
+            'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/app/controllers/__tests__/sample1.json'
+          );
         });
 
         it('retruns validation error', () => {
@@ -193,6 +194,7 @@ describe('imageController', () => {
               data: [
                 {
                   value:
+                    // eslint-disable-next-line max-len
                     'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/app/controllers/__tests__/sample1.json',
                   msg: 'Provided image URL is not allowed.',
                   param: 'url',
