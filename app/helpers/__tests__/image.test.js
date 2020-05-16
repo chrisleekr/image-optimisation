@@ -149,8 +149,8 @@ describe('image', () => {
             type: 'png'
           },
           destinationImageInfo: {
-            sha1: 'a7b701ba211f5a76f2208f2f938a609d3c903104',
-            bytes: 683518,
+            sha1: expect.any(String),
+            bytes: expect.any(Number),
             ext: 'png',
             mime: 'image/png',
             width: 2048,
