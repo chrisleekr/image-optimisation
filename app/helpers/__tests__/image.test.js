@@ -17,26 +17,26 @@ describe('image', () => {
     jest.resetModules();
   });
 
-  describe('saveTempImageFile', () => {
+  describe('saveUploadedImage', () => {
     beforeEach(async () => {
       image = require('../image');
 
-      result = await image.saveTempImageFile({
+      result = await image.saveUploadedImage({
         name: 'test.jpg',
         mv: jest.fn()
       });
     });
 
     it('returns expected value', () => {
-      const oldPath = `${path.resolve(`${__dirname}/../../../data/upload`)}/`;
-      const newPath = `${path.resolve(`${__dirname}/../../../data/output`)}/`;
+      const uploadPath = `${path.resolve(`${__dirname}/../../../data/upload`)}/`;
+      outputPath = `${path.resolve(`${__dirname}/../../../data/output`)}/`;
 
       expect(result).toStrictEqual({
         extension: '.jpg',
-        oldPath,
-        oldFilePath: expect.any(String),
-        newPath,
-        newFilePath: expect.any(String)
+        uploadPath,
+        uploadFilePath: expect.any(String),
+        outputPath,
+        outputFilePath: expect.any(String)
       });
     });
   });
