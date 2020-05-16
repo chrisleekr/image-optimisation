@@ -1,13 +1,19 @@
 # Node.js Image Optimisation
 
-This is a practice project. The project contains Node.js API that optimise images - jpg, svg, png, gif.
+This is a practice project. The project contains Node.js API that optimise images - jpg, png, svg, and gif.
 
 - Node.js, Express, Webpack, Imagemin
+
+## Demo
+
+```bash
+$ curl -v -X POST -F "image=@sample1.jpg" https://image-optimisation.chrislee.kr/image -o sample1-output.jpg
+```
 
 ## How to start in your local environment
 
 ```bash
-docker-compose up -d
+$ docker-compose up -d
 ```
 
 Once docker containers are up, then you can access services with below URL.
@@ -27,8 +33,10 @@ To enable live change for the API, simply uncomment following lines in `docker-c
     - ./:/srv
 ```
 
-Please make sure you run `npm install` in the `api` folder.
+Please make sure you run `npm install`.
 
 ### Routes
 
 - POST `/image`
+  - Fields:
+    - `image`: image file

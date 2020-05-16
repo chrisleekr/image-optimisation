@@ -5,8 +5,8 @@ services:
     container_name: api
     build:
       context: ./
-      # target: dev-stage
-      target: production-stage
+      target: dev-stage
+      # target: production-stage
     networks:
       - internal
     ports:
@@ -16,6 +16,7 @@ services:
     environment:
       - API_URL=http://localhost:3001
       - TZ=Australia/Melbourne
+      - RATE_LIMIT_MAX=10
 
 networks:
   internal:
