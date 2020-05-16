@@ -72,9 +72,9 @@ const saveRemoteImage = async (funcLogger, url) => {
 const saveUploadedImage = async (funcLogger, image) => {
   const logger = funcLogger.child({ func: 'saveUploadedImage' });
   logger.info('Start compressing image');
-  const extension = path.extname(image.name);
+  const extension = path.extname(image.name).replace(/\./g, '');
 
-  const newFileName = `${generateRandomFileName()}${extension}`;
+  const newFileName = `${generateRandomFileName()}.${extension}`;
 
   const uploadFilePath = `${uploadPath}${newFileName}`;
   const outputFilePath = `${outputPath}${newFileName}`;
