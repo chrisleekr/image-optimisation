@@ -40,4 +40,3 @@ Please make sure you run `npm install`.
 - POST `/image`
   - Fields:
     - `image`: image file
-    - `url`: remote image url
