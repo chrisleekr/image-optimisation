@@ -54,7 +54,7 @@ describe('imageController', () => {
             .attach('image', `${path.resolve(`${__dirname}/sample1.jpg`)}`)
             .field(
               'url',
-              'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample99.jpg'
+              'https://raw.githubusercontent.com/chrisleekr/image-optimisation/master/examples/sample99.jpg'
             );
         });
 
@@ -75,7 +75,7 @@ describe('imageController', () => {
                 {
                   value:
                     // eslint-disable-next-line max-len
-                    'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample99.jpg',
+                    'https://raw.githubusercontent.com/chrisleekr/image-optimisation/master/examples/sample99.jpg',
                   msg: 'Image and URL cannot be provided at the same time. Please post with image or URL.',
                   param: 'url',
                   location: 'body'
@@ -147,7 +147,7 @@ describe('imageController', () => {
             .post('/image')
             .field(
               'url',
-              'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample99.jpg'
+              'https://raw.githubusercontent.com/chrisleekr/image-optimisation/master/examples/sample99.jpg'
             );
         });
 
@@ -163,7 +163,7 @@ describe('imageController', () => {
                 {
                   value:
                     // eslint-disable-next-line max-len
-                    'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample99.jpg',
+                    'https://raw.githubusercontent.com/chrisleekr/image-optimisation/master/examples/sample99.jpg',
                   msg: 'Request failed with status code 404',
                   param: 'url',
                   location: 'body'
@@ -179,7 +179,7 @@ describe('imageController', () => {
           response = await request.post('/image').field(
             'url',
             // eslint-disable-next-line max-len
-            'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/app/controllers/__tests__/sample1.json'
+            'https://raw.githubusercontent.com/chrisleekr/image-optimisation/master/app/controllers/__tests__/sample1.json'
           );
         });
 
@@ -195,7 +195,7 @@ describe('imageController', () => {
                 {
                   value:
                     // eslint-disable-next-line max-len
-                    'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/app/controllers/__tests__/sample1.json',
+                    'https://raw.githubusercontent.com/chrisleekr/image-optimisation/master/app/controllers/__tests__/sample1.json',
                   msg: 'Provided image URL is not allowed.',
                   param: 'url',
                   location: 'body'
@@ -231,7 +231,7 @@ describe('imageController', () => {
             .post('/image')
             .field(
               'url',
-              'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample1.jpg'
+              'https://raw.githubusercontent.com/chrisleekr/image-optimisation/master/examples/sample1.jpg'
             );
         });
 

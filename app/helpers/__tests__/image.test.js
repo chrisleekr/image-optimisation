@@ -18,11 +18,11 @@ describe('image', () => {
 
   describe('saveRemoteImage', () => {
     let url;
-    describe('Successfully retrievedfileType', () => {
+    describe('Successfully retrieved fileType', () => {
       beforeEach(async () => {
         image = require('../image');
 
-        url = 'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample1.jpg';
+        url = 'https://raw.githubusercontent.com/chrisleekr/image-optimisation/master/examples/sample1.jpg';
 
         result = await image.saveRemoteImage(logger, url);
       });
@@ -39,7 +39,7 @@ describe('image', () => {
       });
     });
 
-    describe('Failed retrievedfileType', () => {
+    describe('Failed retrieved fileType', () => {
       beforeEach(async () => {
         jest.mock('file-type', () => ({
           fromFile: jest.fn().mockResolvedValue(null)
@@ -47,7 +47,7 @@ describe('image', () => {
 
         image = require('../image');
 
-        url = 'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample1.jpg';
+        url = 'https://raw.githubusercontent.com/chrisleekr/image-optimisation/master/examples/sample1.jpg';
 
         result = await image.saveRemoteImage(logger, url);
       });
@@ -149,8 +149,8 @@ describe('image', () => {
             type: 'png'
           },
           destinationImageInfo: {
-            sha1: '2a51e55c9d09a0b104d6347a54227cbe92e343c4',
-            bytes: 679237,
+            sha1: 'a7b701ba211f5a76f2208f2f938a609d3c903104',
+            bytes: 683518,
             ext: 'png',
             mime: 'image/png',
             width: 2048,
