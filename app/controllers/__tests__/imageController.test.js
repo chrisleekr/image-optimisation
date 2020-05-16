@@ -17,7 +17,7 @@ describe('imageController', () => {
 
   describe('postImage', () => {
     describe('validation error', () => {
-      describe('when image is not provided', () => {
+      describe('when image or url is not provided', () => {
         beforeEach(async () => {
           response = await request.post('/image');
         });
@@ -29,11 +29,55 @@ describe('imageController', () => {
             JSON.stringify({
               success: false,
               status: 422,
-              message: 'There is a validation error.',
+              message: 'There are validation errors.',
               data: [
                 {
-                  msg: "Cannot read property 'image' of undefined",
+                  msg: 'Image or URL must be provided.',
                   param: 'image',
+                  location: 'body'
+                },
+                {
+                  msg: 'Image or URL must be provided.',
+                  param: 'url',
+                  location: 'body'
+                }
+              ]
+            })
+          );
+        });
+      });
+
+      describe('when image and url are provided together', () => {
+        beforeEach(async () => {
+          response = await request
+            .post('/image')
+            .attach('image', `${path.resolve(`${__dirname}/sample1.jpg`)}`)
+            .field(
+              'url',
+              'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample99.jpg'
+            );
+        });
+
+        it('retruns validation error', () => {
+          expect(response.status).toBe(422);
+
+          expect(response.text).toBe(
+            JSON.stringify({
+              success: false,
+              status: 422,
+              message: 'There are validation errors.',
+              data: [
+                {
+                  msg: 'Image and URL cannot be provided at the same time. Please post with image or URL.',
+                  param: 'image',
+                  location: 'body'
+                },
+                {
+                  value:
+                    // eslint-disable-next-line max-len
+                    'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample99.jpg',
+                  msg: 'Image and URL cannot be provided at the same time. Please post with image or URL.',
+                  param: 'url',
                   location: 'body'
                 }
               ]
@@ -54,11 +98,106 @@ describe('imageController', () => {
             JSON.stringify({
               success: false,
               status: 422,
+              message: 'There are validation errors.',
+              data: [
+                {
+                  msg: 'Image or URL must be provided.',
+                  param: 'image',
+                  location: 'body'
+                },
+                {
+                  msg: 'Image or URL must be provided.',
+                  param: 'url',
+                  location: 'body'
+                }
+              ]
+            })
+          );
+        });
+      });
+
+      describe('when non image is provided', () => {
+        beforeEach(async () => {
+          response = await request.post('/image').attach('image', `${path.resolve(`${__dirname}/sample1.json`)}`);
+        });
+
+        it('retruns validation error', () => {
+          expect(response.status).toBe(422);
+
+          expect(response.text).toBe(
+            JSON.stringify({
+              success: false,
+              status: 422,
               message: 'There is a validation error.',
               data: [
                 {
-                  msg: 'Image must be provided.',
+                  msg: 'Uploaded image is not allowed.',
                   param: 'image',
+                  location: 'body'
+                }
+              ]
+            })
+          );
+        });
+      });
+
+      describe('when invalid url is provided', () => {
+        beforeEach(async () => {
+          response = await request
+            .post('/image')
+            .field(
+              'url',
+              'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample99.jpg'
+            );
+        });
+
+        it('retruns validation error', () => {
+          expect(response.status).toBe(422);
+
+          expect(response.text).toBe(
+            JSON.stringify({
+              success: false,
+              status: 422,
+              message: 'There is a validation error.',
+              data: [
+                {
+                  value:
+                    // eslint-disable-next-line max-len
+                    'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample99.jpg',
+                  msg: 'Request failed with status code 404',
+                  param: 'url',
+                  location: 'body'
+                }
+              ]
+            })
+          );
+        });
+      });
+
+      describe('when provided url is not an image', () => {
+        beforeEach(async () => {
+          response = await request.post('/image').field(
+            'url',
+            // eslint-disable-next-line max-len
+            'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/app/controllers/__tests__/sample1.json'
+          );
+        });
+
+        it('retruns validation error', () => {
+          expect(response.status).toBe(422);
+
+          expect(response.text).toBe(
+            JSON.stringify({
+              success: false,
+              status: 422,
+              message: 'There is a validation error.',
+              data: [
+                {
+                  value:
+                    // eslint-disable-next-line max-len
+                    'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/app/controllers/__tests__/sample1.json',
+                  msg: 'Provided image URL is not allowed.',
+                  param: 'url',
                   location: 'body'
                 }
               ]
@@ -68,45 +207,44 @@ describe('imageController', () => {
       });
     });
 
-    describe('when non image is provided', () => {
-      beforeEach(async () => {
-        response = await request.post('/image').attach('image', `${path.resolve(`${__dirname}/sample1.json`)}`);
-      });
-
-      it('retruns validation error', () => {
-        expect(response.status).toBe(422);
-
-        expect(response.text).toBe(
-          JSON.stringify({
-            success: false,
-            status: 422,
-            message: 'There is a validation error.',
-            data: [
-              {
-                msg: 'Uploaded image is not allowed.',
-                param: 'image',
-                location: 'body'
-              }
-            ]
-          })
-        );
-      });
-    });
-
     describe('when success optimisation', () => {
-      beforeEach(async () => {
-        response = await request.post('/image').attach('image', `${path.resolve(`${__dirname}/sample1.jpg`)}`);
+      describe('with image file', () => {
+        beforeEach(async () => {
+          response = await request.post('/image').attach('image', `${path.resolve(`${__dirname}/sample1.jpg`)}`);
+        });
+
+        it('retruns 200', () => {
+          expect(response.status).toBe(200);
+        });
+
+        it('retruns headers', () => {
+          expect(response.headers['x-old-file-size']).toBe('661813');
+          expect(response.headers['x-new-file-size']).toBe('233455');
+          expect(response.headers['x-new-img-width']).toBe('750');
+          expect(response.headers['x-new-img-height']).toBe('750');
+        });
       });
 
-      it('retruns 200', () => {
-        expect(response.status).toBe(200);
-      });
+      describe('with url', () => {
+        beforeEach(async () => {
+          response = await request
+            .post('/image')
+            .field(
+              'url',
+              'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample1.jpg'
+            );
+        });
 
-      it('retruns headers', () => {
-        expect(response.headers['x-old-file-size']).toBe('661813');
-        expect(response.headers['x-new-file-size']).toBe('233455');
-        expect(response.headers['x-new-img-width']).toBe('750');
-        expect(response.headers['x-new-img-height']).toBe('750');
+        it('retruns 200', () => {
+          expect(response.status).toBe(200);
+        });
+
+        it('retruns headers', () => {
+          expect(response.headers['x-old-file-size']).toBe('661813');
+          expect(response.headers['x-new-file-size']).toBe('233455');
+          expect(response.headers['x-new-img-width']).toBe('750');
+          expect(response.headers['x-new-img-height']).toBe('750');
+        });
       });
     });
 

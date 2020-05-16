@@ -6,8 +6,16 @@ This is a practice project. The project contains Node.js API that optimise image
 
 ## Demo
 
+### Post local image to optimise
+
 ```bash
 $ curl -v -X POST -F "image=@sample1.jpg" https://image-optimisation.chrislee.kr/image -o sample1-output.jpg
+```
+
+### Pass remote image URL to optimise
+
+```bash
+$ curl -v -X POST "url=https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample1.jpg" https://image-optimisation.chrislee.kr/image -o sample1-url-output.jpg
 ```
 
 ## How to start in your local environment
@@ -40,3 +48,4 @@ Please make sure you run `npm install`.
 - POST `/image`
   - Fields:
     - `image`: image file
+    - `url`: remote image URL

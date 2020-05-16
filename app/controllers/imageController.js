@@ -1,4 +1,4 @@
-const { saveTempImageFile, compressImage } = require('../helpers/image');
+const { compressImage } = require('../helpers/image');
 const { deleteFiles } = require('../helpers/util');
 const { handleValidationError, handleError, handleSuccessFile } = require('../helpers/response');
 
@@ -13,16 +13,14 @@ const postImage = async (req, res) => {
   let uploadedFile;
 
   try {
-    // Move image
-    const { image } = req.files;
-    logger.info({ image }, 'Received image');
+    uploadedFile = req.uploadedFile;
 
-    uploadedFile = await saveTempImageFile(image);
+    logger.info({ uploadedFile }, 'Received image');
 
-    const imageResult = await compressImage(logger, uploadedFile.oldFilePath, uploadedFile.newPath);
+    const imageResult = await compressImage(logger, uploadedFile.uploadFilePath, uploadedFile.outputPath);
 
     // Delete original image
-    deleteFiles(logger, [uploadedFile.oldFilePath]);
+    deleteFiles(logger, [uploadedFile.uploadFilePath]);
     return handleSuccessFile(res, imageResult.destinationPath, {
       headers: {
         'X-Old-File-Size': imageResult.sourceImageInfo.bytes,
@@ -35,7 +33,7 @@ const postImage = async (req, res) => {
     });
   } catch (e) {
     logger.error(e, 'Optimisation failed');
-    deleteFiles(logger, [uploadedFile.oldFilePath, uploadedFile.newFilePath]);
+    deleteFiles(logger, [uploadedFile.uploadFilePath, uploadedFile.outputFilePath]);
 
     return handleError(res, [
       {

@@ -1,7 +1,10 @@
 const baseDir = process.env.PWD;
 
+const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
+const axios = require('axios');
+const fileType = require('file-type');
 
 const imageInfo = require('image-info');
 const imagemin = require('imagemin');
@@ -11,39 +14,89 @@ const imageminPngquant = require('imagemin-pngquant');
 const imageminGifsicle = require('imagemin-gifsicle');
 const imageminSvgo = require('imagemin-svgo');
 
-const saveTempImageFile = async image => {
-  const extension = path.extname(image.name);
+const uploadPath = `${path.resolve(`${baseDir}/data/upload`)}/`;
+const outputPath = `${path.resolve(`${baseDir}/data/output`)}/`;
 
-  const oldPath = `${path.resolve(`${baseDir}/data/upload`)}/`;
-  const newPath = `${path.resolve(`${baseDir}/data/output`)}/`;
+mkdirp.sync(uploadPath);
+mkdirp.sync(outputPath);
 
-  mkdirp.sync(oldPath);
-  mkdirp.sync(newPath);
+const generateRandomFileName = () =>
+  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
-  const newFileName = `${
-    Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-  }${extension}`;
+const saveRemoteImage = async (funcLogger, url) => {
+  const logger = funcLogger.child({ func: 'saveRemoteImage', url });
+  logger.info('Start saving remote image url');
 
-  const oldFilePath = `${oldPath}${newFileName}`;
-  const newFilePath = `${newPath}${newFileName}`;
+  let newFileName = `${generateRandomFileName()}`;
 
-  await image.mv(oldFilePath);
+  let uploadFilePath = `${uploadPath}${newFileName}`;
+  let outputFilePath = `${outputPath}${newFileName}`;
+
+  const response = await axios({
+    method: 'get',
+    url,
+    responseType: 'arraybuffer'
+  });
+
+  fs.writeFileSync(uploadFilePath, response.data);
+
+  // Determine extension based on the mime type
+  const fileInfo = await fileType.fromFile(uploadFilePath);
+  let extension = null;
+  let mimeType = null;
+
+  if (fileInfo) {
+    extension = fileInfo.ext;
+    mimeType = fileInfo.mime;
+    newFileName = `${generateRandomFileName()}.${extension}`;
+
+    const oldUploadFilePath = uploadFilePath;
+    uploadFilePath = `${uploadPath}${newFileName}`;
+    outputFilePath = `${outputPath}${newFileName}`;
+
+    fs.renameSync(oldUploadFilePath, uploadFilePath);
+  }
+
+  logger.info('Finish saving remote image url');
 
   return {
     extension,
-    oldPath,
-    oldFilePath,
-    newPath,
-    newFilePath
+    mimeType,
+    uploadPath,
+    uploadFilePath,
+    outputPath,
+    outputFilePath
   };
 };
 
-const compressImage = async (funcLogger, filePath, outputPath) => {
-  const logger = funcLogger.child({ filePath, outputPath });
+const saveUploadedImage = async (funcLogger, image) => {
+  const logger = funcLogger.child({ func: 'saveUploadedImage' });
+  logger.info('Start compressing image');
+  const extension = path.extname(image.name).replace(/\./g, '');
+
+  const newFileName = `${generateRandomFileName()}.${extension}`;
+
+  const uploadFilePath = `${uploadPath}${newFileName}`;
+  const outputFilePath = `${outputPath}${newFileName}`;
+
+  await image.mv(uploadFilePath);
+
+  return {
+    extension,
+    mimeType: image.mimetype,
+    uploadPath,
+    uploadFilePath,
+    outputPath,
+    outputFilePath
+  };
+};
+
+const compressImage = async (funcLogger, filePath, destination) => {
+  const logger = funcLogger.child({ func: 'compressImage', filePath, destination });
   logger.info('Start compressing image');
 
   return imagemin([filePath], {
-    destination: outputPath,
+    destination,
     plugins: [
       imageminJpegtran(),
       imageminJpegRecompress(),
@@ -92,4 +145,4 @@ const compressImage = async (funcLogger, filePath, outputPath) => {
   });
 };
 
-module.exports = { saveTempImageFile, compressImage };
+module.exports = { uploadPath, outputPath, generateRandomFileName, saveUploadedImage, saveRemoteImage, compressImage };

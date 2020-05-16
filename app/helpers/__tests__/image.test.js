@@ -9,7 +9,6 @@ describe('image', () => {
   let result;
   let error;
   let orgFilePath;
-  let outputPath;
 
   const compressOptions = {};
 
@@ -17,26 +16,74 @@ describe('image', () => {
     jest.resetModules();
   });
 
-  describe('saveTempImageFile', () => {
+  describe('saveRemoteImage', () => {
+    let url;
+    describe('Successfully retrievedfileType', () => {
+      beforeEach(async () => {
+        image = require('../image');
+
+        url = 'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample1.jpg';
+
+        result = await image.saveRemoteImage(logger, url);
+      });
+
+      it('returns expected value', () => {
+        expect(result).toStrictEqual({
+          extension: 'jpg',
+          mimeType: 'image/jpeg',
+          uploadPath: image.uploadPath,
+          uploadFilePath: expect.any(String),
+          outputPath: image.outputPath,
+          outputFilePath: expect.any(String)
+        });
+      });
+    });
+
+    describe('Failed retrievedfileType', () => {
+      beforeEach(async () => {
+        jest.mock('file-type', () => ({
+          fromFile: jest.fn().mockResolvedValue(null)
+        }));
+
+        image = require('../image');
+
+        url = 'https://raw.githubusercontent.com/chrisleekr/nodejs-image-optimisation/master/examples/sample1.jpg';
+
+        result = await image.saveRemoteImage(logger, url);
+      });
+
+      it('returns expected value', () => {
+        expect(result).toStrictEqual({
+          extension: null,
+          mimeType: null,
+          uploadPath: image.uploadPath,
+          uploadFilePath: expect.any(String),
+          outputPath: image.outputPath,
+          outputFilePath: expect.any(String)
+        });
+      });
+    });
+  });
+
+  describe('saveUploadedImage', () => {
     beforeEach(async () => {
       image = require('../image');
 
-      result = await image.saveTempImageFile({
+      result = await image.saveUploadedImage(logger, {
         name: 'test.jpg',
+        mimetype: 'image/jpeg',
         mv: jest.fn()
       });
     });
 
     it('returns expected value', () => {
-      const oldPath = `${path.resolve(`${__dirname}/../../../data/upload`)}/`;
-      const newPath = `${path.resolve(`${__dirname}/../../../data/output`)}/`;
-
       expect(result).toStrictEqual({
-        extension: '.jpg',
-        oldPath,
-        oldFilePath: expect.any(String),
-        newPath,
-        newFilePath: expect.any(String)
+        extension: 'jpg',
+        mimeType: 'image/jpeg',
+        uploadPath: image.uploadPath,
+        uploadFilePath: expect.any(String),
+        outputPath: image.outputPath,
+        outputFilePath: expect.any(String)
       });
     });
   });
@@ -47,16 +94,15 @@ describe('image', () => {
         image = require('../image');
 
         orgFilePath = `${path.resolve(`${__dirname}/sample1.jpg`)}`;
-        outputPath = `${path.resolve(`${__dirname}/../../../data/output`)}/`;
 
-        result = await image.compressImage(logger, orgFilePath, outputPath, compressOptions);
+        result = await image.compressImage(logger, orgFilePath, image.outputPath, compressOptions);
       });
 
       it('returns expected value', () => {
         expect(result).toStrictEqual({
           data: expect.any(Buffer),
           sourcePath: orgFilePath,
-          destinationPath: `${outputPath}sample1.jpg`,
+          destinationPath: `${image.outputPath}sample1.jpg`,
           sourceImageInfo: {
             sha1: '912f8040712d3f3a71fd3a555c839eef6bd20237',
             bytes: 661813,
@@ -84,16 +130,15 @@ describe('image', () => {
         image = require('../image');
 
         orgFilePath = `${path.resolve(`${__dirname}/sample1.png`)}`;
-        outputPath = `${path.resolve(`${__dirname}/../../../data/output`)}/`;
 
-        result = await image.compressImage(logger, orgFilePath, outputPath, compressOptions);
+        result = await image.compressImage(logger, orgFilePath, image.outputPath, compressOptions);
       });
 
       it('returns expected value', () => {
         expect(result).toStrictEqual({
           data: expect.any(Buffer),
           sourcePath: orgFilePath,
-          destinationPath: `${outputPath}sample1.png`,
+          destinationPath: `${image.outputPath}sample1.png`,
           sourceImageInfo: {
             sha1: '378cd29a2ab0c52fce31e5125f706c6cff07ebd8',
             bytes: 3414396,
@@ -121,16 +166,15 @@ describe('image', () => {
         image = require('../image');
 
         orgFilePath = `${path.resolve(`${__dirname}/sample1.gif`)}`;
-        outputPath = `${path.resolve(`${__dirname}/../../../data/output`)}/`;
 
-        result = await image.compressImage(logger, orgFilePath, outputPath, compressOptions);
+        result = await image.compressImage(logger, orgFilePath, image.outputPath, compressOptions);
       });
 
       it('returns expected value', () => {
         expect(result).toStrictEqual({
           data: expect.any(Buffer),
           sourcePath: orgFilePath,
-          destinationPath: `${outputPath}sample1.gif`,
+          destinationPath: `${image.outputPath}sample1.gif`,
           sourceImageInfo: {
             sha1: 'b2446bea9db819e129ad7a49cb41a91364f67aa6',
             bytes: 3130699,
@@ -158,16 +202,15 @@ describe('image', () => {
         image = require('../image');
 
         orgFilePath = `${path.resolve(`${__dirname}/sample1.svg`)}`;
-        outputPath = `${path.resolve(`${__dirname}/../../../data/output`)}/`;
 
-        result = await image.compressImage(logger, orgFilePath, outputPath, compressOptions);
+        result = await image.compressImage(logger, orgFilePath, image.outputPath, compressOptions);
       });
 
       it('returns expected value', () => {
         expect(result).toStrictEqual({
           data: expect.any(Buffer),
           sourcePath: orgFilePath,
-          destinationPath: `${outputPath}sample1.svg`,
+          destinationPath: `${image.outputPath}sample1.svg`,
           sourceImageInfo: {
             sha1: 'c7580ccd3ba8329279074d1ce76352826908fc29',
             bytes: 3513,
@@ -191,9 +234,9 @@ describe('image', () => {
         image = require('../image');
 
         orgFilePath = `${path.resolve(`${__dirname}/sample999.jpg`)}`;
-        outputPath = `${path.resolve(`${__dirname}/../../../data/non-exist`)}/`;
+        const nonExistOutputPath = `${path.resolve(`${__dirname}/../../../data/non-exist`)}/`;
 
-        result = await image.compressImage(logger, orgFilePath, outputPath, compressOptions).catch(e => {
+        result = await image.compressImage(logger, orgFilePath, nonExistOutputPath, compressOptions).catch(e => {
           error = e;
         });
       });
@@ -207,7 +250,6 @@ describe('image', () => {
       describe('error on retrieving source image info', () => {
         beforeEach(async () => {
           orgFilePath = `${path.resolve(`${__dirname}/sample1.jpg`)}`;
-          outputPath = `${path.resolve(`${__dirname}/../../../data/output`)}/`;
 
           jest.mock('image-info', () =>
             jest.fn((_filePath, callback) => {
@@ -216,7 +258,7 @@ describe('image', () => {
           );
           image = require('../image');
 
-          result = await image.compressImage(logger, orgFilePath, outputPath, compressOptions).catch(e => {
+          result = await image.compressImage(logger, orgFilePath, image.outputPath, compressOptions).catch(e => {
             error = e;
           });
         });
@@ -229,7 +271,6 @@ describe('image', () => {
       describe('error on retrieving destination image info', () => {
         beforeEach(async () => {
           orgFilePath = `${path.resolve(`${__dirname}/sample1.jpg`)}`;
-          outputPath = `${path.resolve(`${__dirname}/../../../data/output`)}/`;
 
           jest.mock('image-info', () =>
             jest.fn((filePath, callback) => {
@@ -243,7 +284,7 @@ describe('image', () => {
           );
           image = require('../image');
 
-          result = await image.compressImage(logger, orgFilePath, outputPath, compressOptions).catch(e => {
+          result = await image.compressImage(logger, orgFilePath, image.outputPath, compressOptions).catch(e => {
             error = e;
           });
         });
