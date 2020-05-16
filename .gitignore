@@ -24,3 +24,6 @@ build
 data
 log
 
+.env
+
+examples/sample1-output.jpg

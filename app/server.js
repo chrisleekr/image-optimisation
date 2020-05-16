@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-// const cors = require('cors');
+const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const bodyParser = require('body-parser');
@@ -14,7 +14,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 app.set('trust proxy', true);
 app.use(helmet());
-// app.use(cors());
+app.use(cors());
 app.use(compression());
 app.use(
   bunyanMiddleware({
@@ -35,7 +35,7 @@ app.set('trust proxy', 1);
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1 // limit each IP to 100 requests per windowMs
+  max: process.env.RATE_LIMIT_MAX || 10 // limit each IP to 100 requests per windowMs
 });
 
 //  apply to all requests
