@@ -1,6 +1,6 @@
 # Image Optimisation Service
 
-[![Build](https://github.com/chrisleekr/image-optimisation/workflows/main/badge.svg)]() [![CodeCov](https://codecov.io/gh/chrisleekr/image-optimisation/branch/master/graph/badge.svg)](https://codecov.io/gh/chrisleekr/image-optimisation) [![MIT License](https://img.shields.io/github/license/chrisleekr/image-optimisation)](https://github.com/chrisleekr/image-optimisation/blob/master/LICENSE)
+[![Build](https://github.com/chrisleekr/image-optimisation/workflows/main/badge.svg)](https://github.com/chrisleekr/image-optimisation/actions?query=workflow%3Amain) [![CodeCov](https://codecov.io/gh/chrisleekr/image-optimisation/branch/master/graph/badge.svg)](https://codecov.io/gh/chrisleekr/image-optimisation) [![MIT License](https://img.shields.io/github/license/chrisleekr/image-optimisation)](https://github.com/chrisleekr/image-optimisation/blob/master/LICENSE)
 
 This is a practice project. The project contains Node.js API that optimise images - jpg, png, svg, and gif.
 
