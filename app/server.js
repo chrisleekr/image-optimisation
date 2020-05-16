@@ -6,6 +6,7 @@ const compression = require('compression');
 const bodyParser = require('body-parser');
 const bunyanMiddleware = require('bunyan-middleware');
 const fileUpload = require('express-fileupload');
+const rateLimit = require('express-rate-limit');
 const { logger } = require('./helpers/logger');
 
 const app = express();
@@ -27,6 +28,18 @@ app.use(
     }
   })
 );
+
+// Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
+// see https://expressjs.com/en/guide/behind-proxies.html
+app.set('trust proxy', 1);
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 1 // limit each IP to 100 requests per windowMs
+});
+
+//  apply to all requests
+app.use(limiter);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
