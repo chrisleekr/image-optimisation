@@ -1,7 +1,7 @@
 {
-  "name": "nodejs-image-optimisation",
+  "name": "image-optimisation",
   "version": "0.0.29",
-  "description": "Node.js Image Optimisation",
+  "description": "Image Optimisation Service",
   "scripts": {
     "start": "node dist/server.js",
     "dev": "cross-env NODE_ENV=development nodemon app/server.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/chrisleekr/nodejs-image-optimisation.git"
+    "url": "https://github.com/chrisleekr/image-optimisation.git"
   },
   "keywords": [
     "Node.js",
@@ -22,9 +22,9 @@
   "author": "Chris Lee <git@chrislee.kr>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/chrisleekr/nodejs-image-optimisation/issues"
+    "url": "https://github.com/chrisleekr/image-optimisation/issues"
   },
-  "homepage": "https://github.com/chrisleekr/nodejs-image-optimisation#readme",
+  "homepage": "https://github.com/chrisleekr/image-optimisation#readme",
   "dependencies": {
     "@types/express": "^4.17.6",
     "axios": "^0.19.2",
