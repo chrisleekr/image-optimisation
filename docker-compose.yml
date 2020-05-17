@@ -16,6 +16,7 @@ services:
     environment:
       - API_URL=http://localhost:3001
       - TZ=Australia/Melbourne
+      - RATE_LIMIT_WINDOWS_MS=60000
       - RATE_LIMIT_MAX=10
 
 networks:
