@@ -65,12 +65,13 @@ describe('server', () => {
     });
   });
 
-  describe('without process.env.RATE_LIMIT_MAX', () => {
+  describe('without default environment variables', () => {
     beforeEach(async () => {
       jest.mock('dotenv', () => ({
         config: jest.fn(() => {
           const orgProcessEnv = process.env;
           process.env = { ...orgProcessEnv };
+          delete process.env.RATE_LIMIT_WINDOWS_MS;
           delete process.env.RATE_LIMIT_MAX;
         })
       }));
